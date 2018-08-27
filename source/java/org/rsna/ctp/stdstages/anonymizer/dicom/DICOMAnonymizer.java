@@ -63,6 +63,41 @@ import org.rsna.util.FileUtil;
 import org.rsna.util.StringUtil;
 
 import org.apache.log4j.Logger;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
+
+// TODO: put this in a separate module
+class JedisFactory {
+
+	private static JedisPool jedisPool;
+	private static JedisFactory instance;
+
+	public JedisFactory() {
+		JedisPoolConfig poolConfig = new JedisPoolConfig();
+		poolConfig.setMaxTotal(128);
+		// TODO: get redis connection details (host, port, timeout, password) from config.xml
+		jedisPool = new JedisPool(
+				poolConfig,
+				"localhost",
+				6379,
+				3000,
+				null);
+	}
+
+	public JedisPool getJedisPool() {
+		return jedisPool;
+	}
+
+	public static JedisFactory getInstance() {
+		if (instance == null) {
+			instance = new JedisFactory();
+		}
+		return instance;
+	}
+
+}
 
 /**
  * The MIRC DICOM anonymizer. The anonymizer provides de-identification and
@@ -79,6 +114,9 @@ public class DICOMAnonymizer {
 	static final DictionaryFactory dFact = DictionaryFactory.getInstance();
 	static final TagDictionary tagDictionary = dFact.getDefaultTagDictionary();
 	static final CodeMeaningTable deIdentificationCodeMeanings = new CodeMeaningTable();
+
+	static final JedisPool jedisPool = JedisFactory.getInstance().getJedisPool();
+	static final Jedis jedisClient = jedisPool.getResource();
 
 	static final String blanks = "                                                       ";
 
@@ -1273,7 +1311,12 @@ public class DICOMAnonymizer {
 				}
 			}
 			//Create the replacement UID
-			return AnonymizerFunctions.hashUID(prefix,uid);
+			String newuid = AnonymizerFunctions.hashUID(prefix, uid);
+
+			//Store in redis
+			jedisClient.set(newuid, uid);
+
+			return newuid;
 		}
 		catch (Exception e) {
 			logger.warn(Tags.toString(fn.thisTag)+": Exception caught in hashuid"+fn.getArgs()+": "+e.getMessage());
