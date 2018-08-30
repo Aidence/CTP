@@ -53,6 +53,7 @@ import org.dcm4che.dict.UIDs;
 import org.dcm4che.dict.VRs;
 
 import org.rsna.ctp.Configuration;
+import org.rsna.ctp.custom.JedisStore;
 import org.rsna.ctp.plugin.Plugin;
 import org.rsna.ctp.objects.PrivateTagIndex;
 import org.rsna.ctp.stdstages.anonymizer.AnonymizerFunctions;
@@ -63,41 +64,6 @@ import org.rsna.util.FileUtil;
 import org.rsna.util.StringUtil;
 
 import org.apache.log4j.Logger;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
-
-// TODO: put this in a separate module
-class JedisFactory {
-
-	private static JedisPool jedisPool;
-	private static JedisFactory instance;
-
-	public JedisFactory() {
-		JedisPoolConfig poolConfig = new JedisPoolConfig();
-		poolConfig.setMaxTotal(128);
-		// TODO: get redis connection details (host, port, timeout, password) from config.xml
-		jedisPool = new JedisPool(
-				poolConfig,
-				"localhost",
-				6379,
-				3000,
-				null);
-	}
-
-	public JedisPool getJedisPool() {
-		return jedisPool;
-	}
-
-	public static JedisFactory getInstance() {
-		if (instance == null) {
-			instance = new JedisFactory();
-		}
-		return instance;
-	}
-
-}
 
 /**
  * The MIRC DICOM anonymizer. The anonymizer provides de-identification and
@@ -115,8 +81,7 @@ public class DICOMAnonymizer {
 	static final TagDictionary tagDictionary = dFact.getDefaultTagDictionary();
 	static final CodeMeaningTable deIdentificationCodeMeanings = new CodeMeaningTable();
 
-	static final JedisPool jedisPool = JedisFactory.getInstance().getJedisPool();
-	static final Jedis jedisClient = jedisPool.getResource();
+	static final JedisStore jedisStore = JedisStore.getInstance();
 
 	static final String blanks = "                                                       ";
 
@@ -654,6 +619,7 @@ public class DICOMAnonymizer {
 	static final String modifydateFn	= "modifydate";
 	static final String initialsFn 		= "initials";
 	static final String lookupFn		= "lookup";
+	static final String lookuporiginalFn = "lookuporiginal";
 	static final String integerFn		= "integer";
 	static final String paramFn 		= "param";
 	static final String quarantineFn 	= "quarantine";
@@ -707,6 +673,7 @@ public class DICOMAnonymizer {
 				else if (fnCall.name.equals(modifydateFn))	out += modifydate(fnCall);
 				else if (fnCall.name.equals(initialsFn)) 	out += initials(fnCall);
 				else if (fnCall.name.equals(lookupFn)) 		out += lookup(fnCall);
+				else if (fnCall.name.equals(lookuporiginalFn)) out += lookuporiginal(fnCall);
 				else if (fnCall.name.equals(integerFn))		out += integer(fnCall);
 				else if (fnCall.name.equals(paramFn)) 		out += param(fnCall);
 				else if (fnCall.name.equals(quarantineFn))	throw new Exception("!quarantine!");
@@ -970,6 +937,19 @@ public class DICOMAnonymizer {
 		}
 	}
 
+	// lookup original value
+	private static String lookuporiginal(FnCall fn) throws Exception {
+		try {
+			String s = fn.context.contents(fn.args[0], fn.thisTag);
+			String originalValue = jedisStore.retrieve(s);
+			return originalValue;
+		}
+		catch (Exception ex) {
+			logger.debug("Exception caught in lookuporiginal function", ex);
+			throw new Exception("!quarantine! - "+ex.getMessage());
+		}
+	}
+
 	//Execute the dateinterval function. This function computes the number of days
 	//between a date in an element and a base date contained in a local unencrypted 
 	//lookup table indexed by the value of another element and returns the result.
@@ -1173,7 +1153,12 @@ public class DICOMAnonymizer {
 					catch (Exception ex) { len = Integer.MAX_VALUE; }
 				}
 			}
-			return AnonymizerFunctions.hash(value,len);
+			String hashValue = AnonymizerFunctions.hash(value,len);
+
+			//Save to mapping store
+			jedisStore.save(hashValue, value);
+
+			return hashValue;
 		}
 		catch (Exception e) {
 			logger.warn(Tags.toString(fn.thisTag)+": Exception caught in hash"+fn.getArgs()+": "+e.getMessage());
@@ -1313,8 +1298,8 @@ public class DICOMAnonymizer {
 			//Create the replacement UID
 			String newuid = AnonymizerFunctions.hashUID(prefix, uid);
 
-			//Store in redis
-			jedisClient.set(newuid, uid);
+			//Save to mapping store
+			jedisStore.save(newuid, uid);
 
 			return newuid;
 		}

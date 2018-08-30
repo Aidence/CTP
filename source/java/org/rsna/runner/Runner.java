@@ -196,6 +196,9 @@ public class Runner {
 			while ((n=br.read(cbuf, 0, cbuf.length)) != -1) sb.append(cbuf,0,n);
 			br.close();
 			System.out.println( sb.toString().replace("<br>","\n") );
+			// TODO: destroy the Jedis pool with: JedisFactory().getInstance().getJedisPool().destroy()
+			// not accessible from here
+			// JedisFactory().getInstance().getJedisPool().destroy();
 		}
 		catch (Exception ex) { }
 	}
