@@ -619,7 +619,7 @@ public class DICOMAnonymizer {
 	static final String modifydateFn	= "modifydate";
 	static final String initialsFn 		= "initials";
 	static final String lookupFn		= "lookup";
-	static final String lookuporiginalFn = "lookuporiginal";
+	static final String lookuporiginalFn	= "lookuporiginal";
 	static final String integerFn		= "integer";
 	static final String paramFn 		= "param";
 	static final String quarantineFn 	= "quarantine";
@@ -673,7 +673,7 @@ public class DICOMAnonymizer {
 				else if (fnCall.name.equals(modifydateFn))	out += modifydate(fnCall);
 				else if (fnCall.name.equals(initialsFn)) 	out += initials(fnCall);
 				else if (fnCall.name.equals(lookupFn)) 		out += lookup(fnCall);
-				else if (fnCall.name.equals(lookuporiginalFn)) out += lookuporiginal(fnCall);
+				else if (fnCall.name.equals(lookuporiginalFn)) 	out += lookuporiginal(fnCall);
 				else if (fnCall.name.equals(integerFn))		out += integer(fnCall);
 				else if (fnCall.name.equals(paramFn)) 		out += param(fnCall);
 				else if (fnCall.name.equals(quarantineFn))	throw new Exception("!quarantine!");
