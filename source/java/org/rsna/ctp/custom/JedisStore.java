@@ -12,10 +12,20 @@ public class JedisStore {
     static final JedisFactory jedisfactory = JedisFactory.getInstance();
     private static JedisStore instance;
 
-    // TODO: expire in one day for now, make this configurable via an environment variable
-    static final int secondsToExpire = 24 * 60 * 60;
+    private static int secondsToExpire = 24 * 60 * 60;  // default: one day
+
+    public JedisStore() {
+        String timeToExpire = System.getenv("REDIS_TIME_TO_EXPIRE");
+        if (timeToExpire != null) {
+            secondsToExpire = Integer.parseInt(timeToExpire);
+        }
+    }
 
     public String save(String key, String value) {
+        if (jedisfactory.useRedis == false) {
+            logger.warn("Redis is not used. Doing nothing.");
+            return null;
+        }
         Jedis jedis = null;
         try {
             jedis = jedisfactory.getJedisPool().getResource();
@@ -33,6 +43,10 @@ public class JedisStore {
     }
 
     public String retrieve(String key) {
+        if (jedisfactory.useRedis == false) {
+            logger.warn("Redis is not used. Doing nothing.");
+            return null;
+        }
         Jedis jedis = null;
         try {
             jedis = jedisfactory.getJedisPool().getResource();
