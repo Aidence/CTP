@@ -16,24 +16,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
-import java.nio.ByteOrder;
-import java.security.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.Set;
-import java.util.regex.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.dcm4che.data.Dataset;
 import org.dcm4che.data.DcmDecodeParam;
@@ -46,14 +32,13 @@ import org.dcm4che.data.FileFormat;
 import org.dcm4che.data.FileMetaInfo;
 import org.dcm4che.data.SpecificCharacterSet;
 import org.dcm4che.dict.DictionaryFactory;
-import org.dcm4che.dict.Status;
 import org.dcm4che.dict.TagDictionary;
 import org.dcm4che.dict.Tags;
 import org.dcm4che.dict.UIDs;
 import org.dcm4che.dict.VRs;
 
 import org.rsna.ctp.Configuration;
-import org.rsna.ctp.custom.JedisStore;
+import org.rsna.ctp.custom.jedis.JedisStore;
 import org.rsna.ctp.plugin.Plugin;
 import org.rsna.ctp.objects.PrivateTagIndex;
 import org.rsna.ctp.stdstages.anonymizer.AnonymizerFunctions;
@@ -80,7 +65,6 @@ public class DICOMAnonymizer {
 	static final DictionaryFactory dFact = DictionaryFactory.getInstance();
 	static final TagDictionary tagDictionary = dFact.getDefaultTagDictionary();
 	static final CodeMeaningTable deIdentificationCodeMeanings = new CodeMeaningTable();
-
 	static final JedisStore jedisStore = JedisStore.getInstance();
 
 	static final String blanks = "                                                       ";
