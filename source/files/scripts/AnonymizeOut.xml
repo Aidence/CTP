@@ -7,6 +7,7 @@
  <p t="SITENAME">SiteName</p>
  <p t="TRIALNAME">Trial</p>
  <p t="UIDROOT">9999</p>
+ <p t="DATEOFFSET">1234</p>
  <e en="T" t="00080005" n="SpecificCharacterSet">@keep()</e>
  <e en="F" t="00080008" n="ImageType"></e>
  <e en="T" t="00080012" n="InstanceCreationDate">@hashdate(this,PatientID)</e>
@@ -14,7 +15,7 @@
  <e en="T" t="00080014" n="InstanceCreatorUID">@hashuid(@UIDROOT,this)</e>
  <e en="T" t="00080016" n="SOPClassUID">@keep()</e>
  <e en="F" t="00080018" n="SOPInstanceUID">@lookuporiginal(this)</e>
- <e en="T" t="00080020" n="StudyDate">@keep()</e>
+ <e en="T" t="00080020" n="StudyDate">@incrementdate(this,@DATEOFFSET)</e>
  <e en="T" t="00080021" n="SeriesDate">@remove()</e>
  <e en="T" t="00080022" n="AcquisitionDate">@remove()</e>
  <e en="T" t="00080023" n="ContentDate">@hashdate(this,PatientID)</e>
