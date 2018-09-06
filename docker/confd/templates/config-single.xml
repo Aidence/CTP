@@ -9,7 +9,7 @@
         <DicomImportService
             class="org.rsna.ctp.stdstages.DicomImportService"
             name="DicomImportService: in"
-            port="{{ or (getenv "CTP_IN_PORT") "11112" }}"
+            port="{{ or (getenv "CTP_IN_PORT") "11111" }}"
             calledAETTag="00097770"
             callingAETTag="00097772"
             connectionIPTag="00097774"
