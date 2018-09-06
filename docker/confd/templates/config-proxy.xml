@@ -37,7 +37,7 @@
             quarantine="quarantines/DicomExportService"
             root="roots/DicomExportService"
             associationTimeout="5"
-            url="dicom://{{ getenv "CTP_REMOTE_AET" }}:{{ getenv "CTP_AET" }}:@{{ getenv "CTP_REMOTE_HOST" }}:{{ getenv "CTP_REMOTE_PORT" }}"/>
+            url="dicom://{{ getenv "CTP_REMOTE_AET" }}:{{ getenv "CTP_AET" }}@{{ getenv "CTP_REMOTE_HOST" }}:{{ getenv "CTP_REMOTE_PORT" }}"/>
     </Pipeline>
 
     <Pipeline
@@ -69,7 +69,7 @@
             quarantine="quarantines/DicomExportService"
             root="roots/DicomExportService"
             associationTimeout="5"
-            url="dicom://{{ getenv "CTP_LOCAL_AET" }}:{{ getenv "CTP_AET" }}:@{{ getenv "CTP_LOCAL_HOST" }}:{{ getenv "CTP_LOCAL_PORT" }}"/>
+            url="dicom://{{ getenv "CTP_LOCAL_AET" }}:{{ getenv "CTP_AET" }}@{{ getenv "CTP_LOCAL_HOST" }}:{{ getenv "CTP_LOCAL_PORT" }}"/>
     </Pipeline>
 
 </Configuration>

@@ -53,6 +53,6 @@
            quarantine="quarantines/DicomExportService"
            root="roots/DicomExportService"
            associationTimeout="5"
-           url="dicom://{{ getenv "CTP_LOCAL_AET" }}:{{ getenv "CTP_AET" }}:@{{ getenv "CTP_LOCAL_HOST" }}:{{ getenv "CTP_LOCAL_PORT" }}"/>
+           url="dicom://{{ getenv "CTP_LOCAL_AET" }}:{{ getenv "CTP_AET" }}@{{ getenv "CTP_LOCAL_HOST" }}:{{ getenv "CTP_LOCAL_PORT" }}"/>
     </Pipeline>
 </Configuration>
