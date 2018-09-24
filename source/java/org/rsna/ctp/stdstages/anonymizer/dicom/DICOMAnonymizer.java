@@ -16,24 +16,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
-import java.nio.ByteOrder;
-import java.security.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.Set;
-import java.util.regex.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.dcm4che.data.Dataset;
 import org.dcm4che.data.DcmDecodeParam;
@@ -46,13 +32,13 @@ import org.dcm4che.data.FileFormat;
 import org.dcm4che.data.FileMetaInfo;
 import org.dcm4che.data.SpecificCharacterSet;
 import org.dcm4che.dict.DictionaryFactory;
-import org.dcm4che.dict.Status;
 import org.dcm4che.dict.TagDictionary;
 import org.dcm4che.dict.Tags;
 import org.dcm4che.dict.UIDs;
 import org.dcm4che.dict.VRs;
 
 import org.rsna.ctp.Configuration;
+import org.rsna.ctp.custom.jedis.JedisStore;
 import org.rsna.ctp.plugin.Plugin;
 import org.rsna.ctp.objects.PrivateTagIndex;
 import org.rsna.ctp.stdstages.anonymizer.AnonymizerFunctions;
@@ -79,6 +65,7 @@ public class DICOMAnonymizer {
 	static final DictionaryFactory dFact = DictionaryFactory.getInstance();
 	static final TagDictionary tagDictionary = dFact.getDefaultTagDictionary();
 	static final CodeMeaningTable deIdentificationCodeMeanings = new CodeMeaningTable();
+	static final JedisStore jedisStore = JedisStore.getInstance();
 
 	static final String blanks = "                                                       ";
 
@@ -616,6 +603,7 @@ public class DICOMAnonymizer {
 	static final String modifydateFn	= "modifydate";
 	static final String initialsFn 		= "initials";
 	static final String lookupFn		= "lookup";
+	static final String lookuporiginalFn	= "lookuporiginal";
 	static final String integerFn		= "integer";
 	static final String paramFn 		= "param";
 	static final String quarantineFn 	= "quarantine";
@@ -669,6 +657,7 @@ public class DICOMAnonymizer {
 				else if (fnCall.name.equals(modifydateFn))	out += modifydate(fnCall);
 				else if (fnCall.name.equals(initialsFn)) 	out += initials(fnCall);
 				else if (fnCall.name.equals(lookupFn)) 		out += lookup(fnCall);
+				else if (fnCall.name.equals(lookuporiginalFn)) 	out += lookuporiginal(fnCall);
 				else if (fnCall.name.equals(integerFn))		out += integer(fnCall);
 				else if (fnCall.name.equals(paramFn)) 		out += param(fnCall);
 				else if (fnCall.name.equals(quarantineFn))	throw new Exception("!quarantine!");
@@ -932,6 +921,19 @@ public class DICOMAnonymizer {
 		}
 	}
 
+	// lookup original value
+	private static String lookuporiginal(FnCall fn) throws Exception {
+		try {
+			String s = fn.context.contents(fn.args[0], fn.thisTag);
+			String originalValue = jedisStore.retrieve(s);
+			return originalValue;
+		}
+		catch (Exception ex) {
+			logger.debug("Exception caught in lookuporiginal function", ex);
+			throw new Exception("!quarantine! - "+ex.getMessage());
+		}
+	}
+
 	//Execute the dateinterval function. This function computes the number of days
 	//between a date in an element and a base date contained in a local unencrypted 
 	//lookup table indexed by the value of another element and returns the result.
@@ -1135,7 +1137,12 @@ public class DICOMAnonymizer {
 					catch (Exception ex) { len = Integer.MAX_VALUE; }
 				}
 			}
-			return AnonymizerFunctions.hash(value,len);
+			String hashValue = AnonymizerFunctions.hash(value,len);
+
+			//Save to mapping store
+			jedisStore.save(hashValue, value);
+
+			return hashValue;
 		}
 		catch (Exception e) {
 			logger.warn(Tags.toString(fn.thisTag)+": Exception caught in hash"+fn.getArgs()+": "+e.getMessage());
@@ -1273,7 +1280,12 @@ public class DICOMAnonymizer {
 				}
 			}
 			//Create the replacement UID
-			return AnonymizerFunctions.hashUID(prefix,uid);
+			String newuid = AnonymizerFunctions.hashUID(prefix, uid);
+
+			//Save to mapping store
+			jedisStore.save(newuid, uid);
+
+			return newuid;
 		}
 		catch (Exception e) {
 			logger.warn(Tags.toString(fn.thisTag)+": Exception caught in hashuid"+fn.getArgs()+": "+e.getMessage());

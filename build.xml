@@ -22,7 +22,9 @@
 		<pathelement location="${libraries}/log4j.jar"/>
 		<pathelement location="${libraries}/edtftpj.jar"/>
 		<pathelement location="${libraries}/jdbm.jar"/>
+		<pathelement location="${libraries}/jedis-2.9.0.jar"/>
 		<pathelement location="${libraries}/commons-compress-1.0.jar"/>
+		<pathelement location="${libraries}/commons-pool2-2.6.0.jar"/>
 		<pathelement location="${libraries}/jai_imageio.jar"/>
 		<pathelement location="${libraries}/pixelmed_codec.jar"/>
 		<pathelement location="${libraries}/email/activation.jar"/>

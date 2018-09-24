@@ -1,0 +1,69 @@
+<Configuration>
+    <Server
+        maxThreads="20"
+        port="1080"/>
+
+    <Pipeline
+        name="in"
+        root="/data/dicom/in">
+        <DicomImportService
+            class="org.rsna.ctp.stdstages.DicomImportService"
+            name="DicomImportService: in"
+            port="{{ or (getenv "CTP_IN_PORT") "11111" }}"
+            calledAETTag="00097770"
+            callingAETTag="00097772"
+            connectionIPTag="00097774"
+            timeTag="00097776"
+            quarantine="quarantines/DicomImportService"
+            root="roots/DicomImportService">
+            <accept callingAET="{{ getenv "CTP_LOCAL_AET" }}"/>
+        </DicomImportService>
+        <DicomAnonymizer
+            name="DicomAnonymizer"
+            id="anonymization: in"
+            class="org.rsna.ctp.stdstages.DicomAnonymizer"
+            root="roots/DicomAnonymizer"
+            script="scripts/AnonymizeIn.xml"
+            quarantine="quarantines/DicomAnonymizer" />
+        <DicomExportService
+            class="org.rsna.ctp.stdstages.DicomExportService"
+            name="DicomExportService: in"
+            quarantine="quarantines/DicomExportService"
+            root="roots/DicomExportService"
+            associationTimeout="5"
+            url="dicom://{{ getenv "CTP_REMOTE_AET" }}:{{ getenv "CTP_AET" }}@{{ getenv "CTP_REMOTE_HOST" }}:{{ getenv "CTP_REMOTE_PORT" }}"/>
+    </Pipeline>
+
+    <Pipeline
+        name="out"
+        root="/data/dicom/out">
+        <DicomImportService
+            class="org.rsna.ctp.stdstages.DicomImportService"
+            name="DicomImportService: out"
+            port="{{ or (getenv "CTP_OUT_PORT") "11112" }}"
+            calledAETTag="00097770"
+            callingAETTag="00097772"
+            connectionIPTag="00097774"
+            logConnections="yes"
+            timeTag="00097776"
+            quarantine="quarantines/DicomImportService"
+            root="roots/DicomImportService">
+            <accept callingAET="{{ getenv "CTP_REMOTE_AET" }}"/>
+        </DicomImportService>
+        <DicomAnonymizer
+            name="DicomAnonymizer"
+            id="anonymization: out"
+            class="org.rsna.ctp.stdstages.DicomAnonymizer"
+            root="roots/DicomAnonymizer"
+            script="scripts/AnonymizeOut.xml"
+            quarantine="quarantines/DicomAnonymizer" />
+        <DicomExportService
+            class="org.rsna.ctp.stdstages.DicomExportService"
+            name="DicomExportService: out"
+            quarantine="quarantines/DicomExportService"
+            root="roots/DicomExportService"
+            associationTimeout="5"
+            url="dicom://{{ getenv "CTP_LOCAL_AET" }}:{{ getenv "CTP_AET" }}@{{ getenv "CTP_LOCAL_HOST" }}:{{ getenv "CTP_LOCAL_PORT" }}"/>
+    </Pipeline>
+
+</Configuration>
