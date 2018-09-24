@@ -14,7 +14,7 @@
  <e en="F" t="00080013" n="InstanceCreationTime"></e>
  <e en="T" t="00080014" n="InstanceCreatorUID">@hashuid(@UIDROOT,this)</e>
  <e en="T" t="00080016" n="SOPClassUID">@keep()</e>
- <e en="F" t="00080018" n="SOPInstanceUID">@hashuid(@UIDROOT,this)</e>
+ <e en="T" t="00080018" n="SOPInstanceUID">@hashuid(@UIDROOT,this)</e>
  <e en="T" t="00080020" n="StudyDate">@incrementdate(this,@DATEOFFSET)</e>
  <e en="T" t="00080021" n="SeriesDate">@remove()</e>
  <e en="T" t="00080022" n="AcquisitionDate">@remove()</e>
@@ -76,21 +76,21 @@
  <e en="F" t="00081100" n="RefResultsSeq"></e>
  <e en="T" t="00081110" n="RefStudySeq">@remove()</e>
  <e en="T" t="00081111" n="RefPPSSeq">@remove()</e>
- <e en="F" t="00081115" n="RefSeriesSeq"></e>
+ <e en="T" t="00081115" n="RefSeriesSeq">@process()</e>
  <e en="T" t="00081120" n="RefPatientSeq">@remove()</e>
  <e en="F" t="00081125" n="RefVisitSeq"></e>
  <e en="F" t="00081130" n="RefOverlaySeq"></e>
- <e en="T" t="00081140" n="RefImageSeq">@remove()</e>
+ <e en="T" t="00081140" n="RefImageSeq">@process()</e>
  <e en="F" t="00081145" n="RefCurveSeq"></e>
  <e en="F" t="0008114a" n="RefInstanceSeq"></e>
  <e en="T" t="00081150" n="RefSOPClassUID">@keep()</e>
- <e en="F" t="00081155" n="RefSOPInstanceUID">@hashuid(@UIDROOT,this)</e>
+ <e en="T" t="00081155" n="RefSOPInstanceUID">@hashuid(@UIDROOT,this)</e>
  <e en="F" t="0008115a" n="SOPClassesSupported"></e>
  <e en="F" t="00081160" n="RefFrameNumber"></e>
  <e en="T" t="00081195" n="TransactionUID">@hashuid(@UIDROOT,this)</e>
  <e en="F" t="00081197" n="FailureReason"></e>
  <e en="F" t="00081198" n="FailedSOPSeq"></e>
- <e en="F" t="00081199" n="RefSOPSeq"></e>
+ <e en="T" t="00081199" n="RefSOPSeq">@process()</e>
  <e en="T" t="00082111" n="DerivationDescription">@remove()</e>
  <e en="T" t="00082112" n="SourceImageSeq">@remove()</e>
  <e en="F" t="00082120" n="StageName"></e>
@@ -748,7 +748,7 @@
  <e en="F" t="00283004" n="ModalityLUTType"></e>
  <e en="F" t="00283006" n="LUTData"></e>
  <e en="F" t="00283010" n="VOILUTSeq"></e>
- <e en="F" t="00283110" n="SoftcopyVOILUTSeq"></e>
+ <e en="T" t="00283110" n="SoftcopyVOILUTSeq">@process()</e>
  <e en="T" t="00284000" n="ImagePresentationComments">@remove()</e>
  <e en="F" t="00285000" n="BiPlaneAcquisitionSeq"></e>
  <e en="F" t="00286010" n="RepresentativeFrameNumber"></e>
@@ -988,7 +988,7 @@
  <e en="F" t="0040a360" n="PredecessorDocumentsSeq"></e>
  <e en="F" t="0040a370" n="RefRequestSeq"></e>
  <e en="F" t="0040a372" n="PerformedProcedureCodeSeq"></e>
- <e en="F" t="0040a375" n="CurrentRequestedProcedureEvidenceSeq"></e>
+ <e en="T" t="0040a375" n="CurrentRequestedProcedureEvidenceSeq">@process()</e>
  <e en="F" t="0040a385" n="PertinentOtherEvidenceSeq"></e>
  <e en="F" t="0040a491" n="CompletionFlag"></e>
  <e en="F" t="0040a492" n="CompletionFlagDescription"></e>
@@ -1006,6 +1006,8 @@
  <e en="F" t="0040db73" n="RefContentItemIdentifier"></e>
  <e en="T" t="00603000" n="OverlayData">@remove()</e>
  <e en="T" t="00604000" n="OverlayComments">@remove()</e>
+ <e en="T" t="00700001" n="GraphicAnnotationSeq">@process()</e>
+ <e en="T" t="0070005a" n="DisplayedAreaSelectionSeq">@process()</e>
  <e en="T" t="0070031a" n="FiducialUID">@hashuid(@UIDROOT,this)</e>
  <e en="T" t="00880140" n="StorageMediaFilesetUID">@hashuid(@UIDROOT,this)</e>
  <e en="T" t="00880200" n="IconImageSequence">@remove()</e>
