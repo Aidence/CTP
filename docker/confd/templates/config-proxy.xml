@@ -18,12 +18,6 @@
             root="roots/DicomImportService">
             <accept callingAET="{{ getenv "CTP_LOCAL_AET" }}"/>
         </DicomImportService>
-        <DicomFilter
-            name="DicomFilter"
-            class="org.rsna.ctp.stdstages.DicomFilter"
-            root="roots/DicomFilter"
-            script="scripts/dicom-filter.script"
-            quarantine="quarantines/DicomFilter" />
         <DicomAnonymizer
             name="DicomAnonymizer"
             id="anonymization: in"
