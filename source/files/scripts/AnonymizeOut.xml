@@ -798,6 +798,7 @@
  <e en="F" t="00321064" n="RequestedProcedureCodeSeq"></e>
  <e en="T" t="00321070" n="RequestedContrastAgent">@remove()</e>
  <e en="T" t="00324000" n="StudyComments">@remove()</e>
+ <e en="T" t="00330010" n="PriorAccessionNumber">@lookuporiginal(this)</e>
  <e en="F" t="00380004" n="RefPatientAliasSeq"></e>
  <e en="F" t="00380008" n="VisitStatusID"></e>
  <e en="T" t="00380010" n="AdmissionID">@remove()</e>
