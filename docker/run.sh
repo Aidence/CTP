@@ -17,7 +17,7 @@ echo "Updated app user to UID=$PUID GID=$PGID"
 
 # Allow switching confd template files
 CTP_CONFIG_TEMPLATE="config-${CTP_CONFIG_TYPE:-single}.xml"
-ln -s "/etc/confd/templates/$CTP_CONFIG_TEMPLATE" /etc/confd/templates/config.xml
+ln -sfn "/etc/confd/templates/$CTP_CONFIG_TEMPLATE" /etc/confd/templates/config.xml
 
 # Update configuration from the environment
 su-exec app:app confd -onetime -backend env
