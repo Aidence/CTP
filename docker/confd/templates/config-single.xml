@@ -32,7 +32,7 @@
             logDuplicates="no"
             name="DirectoryStorageService"
             quarantine="quarantines/DirectoryStorageService"
-            root="/data/cad/in"
+            root="/data/veye/in"
             setStandardExtensions="no"
             structure="[0020,000d]/[0020,000e]"
             whitespaceReplacement="_"/>
@@ -43,7 +43,7 @@
         root="/data/dicom/out">
        <DirectoryImportService
            class="org.rsna.ctp.stdstages.DirectoryImportService"
-           import="/data/cad/out"
+           import="/data/veye/out"
            name="DirectoryImportService"
            quarantine="quarantines/DirectoryImportService"
            root="roots/DirectoryImportService"/>
