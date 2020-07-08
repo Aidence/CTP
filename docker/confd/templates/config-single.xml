@@ -9,14 +9,14 @@
         <DicomImportService
             class="org.rsna.ctp.stdstages.DicomImportService"
             name="DicomImportService: in"
-            port="{{ or (getenv "CTP_IN_PORT") "11111" }}"
+            port="{{ getv "/services/ctp/in_port" "11111" }}"
             calledAETTag="00097770"
             callingAETTag="00097772"
             connectionIPTag="00097774"
             timeTag="00097776"
             quarantine="quarantines/DicomImportService"
             root="roots/DicomImportService">
-            <accept callingAET="{{ getenv "CTP_LOCAL_AET" }}"/>
+            <accept callingAET="{{ getv "/services/ctp/local_aet" }}"/>
         </DicomImportService>
         <DicomAnonymizer
             name="DicomAnonymizer"
@@ -53,6 +53,6 @@
            quarantine="quarantines/DicomExportService"
            root="roots/DicomExportService"
            associationTimeout="5"
-           url="dicom://{{ getenv "CTP_LOCAL_AET" }}:{{ getenv "CTP_AET" }}@{{ getenv "CTP_LOCAL_HOST" }}:{{ getenv "CTP_LOCAL_PORT" }}"/>
+           url="dicom://{{ getv "/services/ctp/local_aet" }}:{{ getv "/services/ctp/aet" }}@{{ getv "/services/ctp/local_host" }}:{{ getv "/services/ctp/local_port" }}"/>
     </Pipeline>
 </Configuration>

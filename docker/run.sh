@@ -19,8 +19,14 @@ echo "Updated app user to UID=$PUID GID=$PGID"
 CTP_CONFIG_TEMPLATE="config-${CTP_CONFIG_TYPE:-single}.xml"
 ln -sfn "/etc/confd/templates/$CTP_CONFIG_TEMPLATE" /etc/confd/templates/config.xml
 
-# Update configuration from the environment
-su-exec app:app confd -onetime -backend env
+# Update configuration 
+# su-exec app:app confd -onetime -backend env
+
+export ETCD_PORT=${ETCD_PORT:-2379}
+export HOST_IP=${HOST_IP:-172.30.0.2}
+export ETCD=etcd:$ETCD_PORT
+
+su-exec app:app confd -onetime -node "http://$ETCD"
 
 # Exclude certain DICOM tags from anonymization on import
 if [ -n "$CTP_EXCLUDE_ANONYM" ]; then
